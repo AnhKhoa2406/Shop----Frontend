@@ -1,19 +1,17 @@
-
 import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../context/ShopContext'
-import Title from '../components/Title'
 import ProductItem from '../components/ProductItem'
 
 const CATEGORIES = [
-  { value: 'Men', label: 'Nam' },
-  { value: 'Women', label: 'Nữ' },
-  { value: 'Kids', label: 'Trẻ em' },
+  { value: 'Nam', label: 'Nam' },
+  { value: 'Nữ', label: 'Nữ' },
+  { value: 'Trẻ em', label: 'Trẻ em' },
 ]
 
 const SUB_CATEGORIES = [
-  { value: 'Topwear', label: 'Áo' },
-  { value: 'Bottomwear', label: 'Quần' },
-  { value: 'Winterwear', label: 'Đồ mùa đông' },
+  { value: 'Áo', label: 'Áo' },
+  { value: 'Quần', label: 'Quần' },
+  { value: 'Đồ mùa đông', label: 'Đồ mùa đông' },
 ]
 
 const Collection = () => {
@@ -88,9 +86,11 @@ const Collection = () => {
           onClick={() => setShowFilter((prev) => !prev)}
           className="
             my-2
-            text-lg
-            sm:text-xl
-            font-medium
+            text-xl
+            sm:text-2xl
+            font-bold
+            tracking-tight
+            text-gray-900
             flex
             items-center
             justify-between
@@ -103,7 +103,8 @@ const Collection = () => {
           <span
             className={`
               sm:hidden
-              text-sm
+              text-base
+              text-orange-500
               transition-transform
               duration-300
               ${showFilter ? 'rotate-90' : ''}
@@ -128,11 +129,11 @@ const Collection = () => {
             sm:block
           `}
         >
-          <p className="mb-4 text-sm font-semibold text-gray-800">
+          <p className="mb-4 text-base font-bold text-gray-900 tracking-wide">
             DANH MỤC
           </p>
 
-          <div className="flex flex-col gap-3 text-sm text-gray-600">
+          <div className="flex flex-col gap-3 text-base text-gray-700">
             {CATEGORIES.map((item) => (
               <label
                 key={item.value}
@@ -141,6 +142,7 @@ const Collection = () => {
                   items-center
                   gap-3
                   cursor-pointer
+                  font-medium
                   hover:text-orange-500
                   transition-colors
                 "
@@ -176,11 +178,11 @@ const Collection = () => {
             sm:block
           `}
         >
-          <p className="mb-4 text-sm font-semibold text-gray-800">
+          <p className="mb-4 text-base font-bold text-gray-900 tracking-wide">
             LOẠI SẢN PHẨM
           </p>
 
-          <div className="flex flex-col gap-3 text-sm text-gray-600">
+          <div className="flex flex-col gap-3 text-base text-gray-700">
             {SUB_CATEGORIES.map((item) => (
               <label
                 key={item.value}
@@ -189,6 +191,7 @@ const Collection = () => {
                   items-center
                   gap-3
                   cursor-pointer
+                  font-medium
                   hover:text-orange-500
                   transition-colors
                 "
@@ -220,15 +223,15 @@ const Collection = () => {
             justify-between
             items-center
             gap-3
-            text-base
-            sm:text-2xl
             mb-6
           "
         >
-          <Title
-            text1="TẤT CẢ"
-            text2="SẢN PHẨM"
-          />
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            <span className="text-gray-800">TẤT CẢ </span>
+            <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+              SẢN PHẨM
+            </span>
+          </h2>
 
           {/* Sắp xếp */}
           <select
@@ -238,10 +241,12 @@ const Collection = () => {
               border
               border-gray-300
               rounded-lg
-              text-xs
-              sm:text-sm
-              px-2
-              sm:px-3
+              text-sm
+              sm:text-base
+              font-medium
+              text-gray-700
+              px-3
+              sm:px-4
               py-2
               outline-none
               bg-white
@@ -267,11 +272,11 @@ const Collection = () => {
         {/* Không có sản phẩm */}
         {filterProducts.length === 0 ? (
           <div className="py-20 text-center">
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-500 text-base font-medium">
               Không tìm thấy sản phẩm phù hợp.
             </p>
 
-            <p className="text-gray-300 text-xs mt-2">
+            <p className="text-gray-400 text-sm mt-2">
               Hãy thử thay đổi bộ lọc hoặc từ khóa tìm kiếm.
             </p>
           </div>
@@ -304,4 +309,3 @@ const Collection = () => {
 }
 
 export default Collection
-

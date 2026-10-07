@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext'
-import Title from './Title'
 import ProductItem from './ProductItem'
 
 const BestSeller = () => {
@@ -19,9 +18,12 @@ const BestSeller = () => {
     <section className="my-16">
       {/* Tiêu đề */}
       <div className="text-center mb-10">
-        <div className="text-2xl sm:text-3xl">
-          <Title text1="SẢN PHẨM" text2="BÁN CHẠY" />
-        </div>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
+          <span className="text-gray-800">SẢN PHẨM </span>
+          <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+            BÁN CHẠY
+          </span>
+        </h2>
         <p className="max-w-xl mx-auto mt-2 px-4 text-xs sm:text-sm md:text-base text-gray-500 leading-relaxed">
           Những sản phẩm được yêu thích và mua nhiều nhất tại cửa hàng.
         </p>

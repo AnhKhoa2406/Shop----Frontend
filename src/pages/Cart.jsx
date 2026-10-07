@@ -1,113 +1,415 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { ShopContext } from '../context/ShopContext'
-import { assets } from '../assets/assets';
-import CartTotal from '../components/CartTotal';
-import { useNavigate } from 'react-router-dom';
+import React, {
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
+
+import {
+  ShopContext,
+} from '../context/ShopContext'
+
+import {
+  assets,
+} from '../assets/assets'
+
+import CartTotal from '../components/CartTotal'
+
+import {
+  useNavigate,
+} from 'react-router-dom'
+
+
+const formatVND = (
+  value
+) => {
+
+  const num =
+    Number(value)
+
+
+  if (
+    isNaN(num)
+  ) {
+
+    return value
+
+  }
+
+
+  return (
+    num.toLocaleString(
+      'vi-VN'
+    ) +
+    ' ₫'
+  )
+
+}
+
 
 const Cart = () => {
 
-  const { products, currency, cartItems, updateQuantity, navigate} = useContext(ShopContext);
-  const [cartData, setCartData] = useState([]);
+  const {
+    products,
+    cartItems,
+    updateQuantity,
+  } = useContext(
+    ShopContext
+  )
+
+
+  const navigate =
+    useNavigate()
+
+
+  const [
+    cartData,
+    setCartData,
+  ] = useState([])
 
 
   useEffect(() => {
-    const tempData = [];
-    for (const items in cartItems) {
-      for (const item in cartItems[items]) {
-        if (cartItems[items][item] > 0) {
+
+    const tempData = []
+
+
+    for (
+      const itemId in cartItems
+    ) {
+
+      for (
+        const size in
+        cartItems[itemId]
+      ) {
+
+        const quantity =
+          Number(
+            cartItems[itemId][size]
+          )
+
+
+        if (
+          quantity > 0
+        ) {
+
           tempData.push({
-            _id: items,
-            size: item,
-            quantity: cartItems[items][item]
+            _id:
+              String(
+                itemId
+              ),
+            size,
+            quantity,
           })
+
         }
+
       }
+
     }
-    setCartData(tempData);
-  }, [cartItems])
+
+
+    setCartData(
+      tempData
+    )
+
+  }, [
+    cartItems,
+  ])
+
 
   return (
-    <div className='border-t border-gray-200 pt-14'>
+    <div className="border-t-2 pt-10 pb-20">
 
-      <div className='text-2xl mb-3'>
-        <h1 className='text-gray-500'>YOUR CART</h1>
+      <div className="mb-10 text-center">
+
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
+
+          <span className="text-gray-800">
+            GIỎ
+          </span>
+
+          {' '}
+
+          <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+            HÀNG CỦA BẠN
+          </span>
+
+        </h1>
+
+
+        <p className="mt-2 text-xs text-gray-500 sm:text-sm">
+          Kiểm tra lại sản phẩm trước khi tiến hành thanh toán.
+        </p>
+
       </div>
 
-      <div>
-        {
-          cartData.map((item, index) => {
-            const productData = products.find((product) => product._id === item._id);
 
-            return (
-              <div
-                key={index}
-                className='py-4 border-t border-b border-gray-200 text-gray-700 grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4'
-              >
-                <div className='flex items-start gap-6'>
-                  <img className='w-16 sm:w-20' src={productData.image[0]} alt="" />
-                  <div>
-                    <p className='text-xs sm:text-lg font-medium'>{productData.name}</p>
-                    <div className='flex items-center gap-5 mt-2'>
-                      <p>{currency}{productData.price}</p>
-                      <p className='px-2 sm:px-3 sm:py-1 border border-gray-200 bg-gray-50'>{item.size}</p>
-                    </div>
-                  </div>
-                </div>
+      {cartData.length === 0 ? (
 
-                {/* ---------- Nút tăng giảm số lượng ---------- */}
-                <div className='flex items-center border border-gray-300 rounded-md w-fit overflow-hidden'>
-                  <button
-                    onClick={() =>
-                      item.quantity > 1 &&
-                      updateQuantity(item._id, item.size, item.quantity - 1)
-                    }
-                    className='w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition disabled:opacity-30 disabled:hover:bg-transparent'
-                    disabled={item.quantity <= 1}
-                  >
-                    −
-                  </button>
+        <div className="rounded-3xl border-2 border-dashed border-gray-200 bg-gray-50/60 py-20 text-center">
 
-                  <span className='w-8 sm:w-10 text-center text-sm select-none'>
-                    {item.quantity}
-                  </span>
+          <p className="mb-3 text-5xl">
+            🛒
+          </p>
 
-                  <button
-                    onClick={() => updateQuantity(item._id, item.size, item.quantity + 1)}
-                    className='w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition'
-                  >
-                    +
-                  </button>
-                </div>
 
-                <img
-                  onClick={() => updateQuantity(item._id, item.size, 0)}
-                  className='w-4 mr-4 cursor-pointer justify-self-center'
-                  src={assets.bin_icon}
-                  alt=""
-                />
-              </div>
-            )
-          })
-        }
-      </div>
+          <p className="mb-6 text-sm text-gray-500">
+            Giỏ hàng của bạn đang trống.
+          </p>
 
-      {/* ---------- Cart Total & Checkout ---------- */}
-      <div className='flex justify-end my-20'>
-        <div className='w-full sm:w-[450px]'>
-          <CartTotal />
-          <div className='w-full text-end'>
-            <button
-              onClick={() => navigate('/place-order')}
-              className='bg-black text-white text-sm my-8 px-8 py-3 hover:bg-gray-700 transition'
-            >
-              PROCEED TO CHECKOUT
-            </button>
-          </div>
+
+          <button
+            type="button"
+            onClick={() =>
+              navigate(
+                '/collection'
+              )
+            }
+            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-orange-200 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
+          >
+            TIẾP TỤC MUA SẮM
+          </button>
+
         </div>
-      </div>
+
+      ) : (
+
+        <>
+
+          <div className="flex flex-col gap-4">
+
+            {cartData.map(
+              (
+                item
+              ) => {
+
+                const productData =
+                  products.find(
+                    (product) =>
+                      String(
+                        product._id
+                      ) ===
+                      String(
+                        item._id
+                      )
+                  )
+
+
+                if (
+                  !productData
+                ) {
+
+                  return null
+
+                }
+
+
+                const maxStock =
+                  typeof productData.stock ===
+                    'number' &&
+                  productData.stock >
+                    0
+                    ? productData.stock
+                    : 99
+
+
+                const canIncrease =
+                  item.quantity <
+                  maxStock
+
+
+                return (
+                  <div
+                    key={`${item._id}-${item.size}`}
+                    className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-4 transition-all duration-300 hover:border-orange-200 hover:shadow-md sm:p-5"
+                  >
+
+                    <div className="flex min-w-0 flex-1 items-center gap-4 sm:gap-6">
+
+                      <img
+                        className="h-16 w-16 flex-shrink-0 rounded-xl border border-gray-100 object-cover sm:h-20 sm:w-20"
+                        src={
+                          productData.image &&
+                          productData.image.length >
+                            0
+                            ? productData.image[0]
+                            : ''
+                        }
+                        alt={
+                          productData.name
+                        }
+                      />
+
+
+                      <div className="min-w-0">
+
+                        <p className="truncate text-sm font-semibold text-gray-800 sm:text-base">
+                          {
+                            productData.name
+                          }
+                        </p>
+
+
+                        <div className="mt-2 flex flex-wrap items-center gap-3">
+
+                          <p className="text-sm font-bold text-orange-600 sm:text-base">
+                            {
+                              formatVND(
+                                productData.price
+                              )
+                            }
+                          </p>
+
+
+                          <p className="rounded-md border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs text-gray-600">
+                            Size:
+                            {' '}
+                            {
+                              item.size
+                            }
+                          </p>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+
+                    <div className="flex flex-shrink-0 items-center overflow-hidden rounded-full border border-gray-300">
+
+                      <button
+                        type="button"
+                        onClick={() => {
+
+                          if (
+                            item.quantity >
+                            1
+                          ) {
+
+                            updateQuantity(
+                              item._id,
+                              item.size,
+                              item.quantity -
+                                1
+                            )
+
+                          }
+
+                        }}
+                        disabled={
+                          item.quantity <=
+                          1
+                        }
+                        className="flex h-8 w-8 items-center justify-center text-gray-500 transition hover:bg-orange-50 hover:text-orange-600 disabled:cursor-not-allowed disabled:opacity-30 sm:h-9 sm:w-9"
+                      >
+                        −
+                      </button>
+
+
+                      <span className="w-8 select-none text-center text-sm font-medium sm:w-10">
+                        {
+                          item.quantity
+                        }
+                      </span>
+
+
+                      <button
+                        type="button"
+                        onClick={() => {
+
+                          if (
+                            canIncrease
+                          ) {
+
+                            updateQuantity(
+                              item._id,
+                              item.size,
+                              item.quantity +
+                                1
+                            )
+
+                          }
+
+                        }}
+                        disabled={
+                          !canIncrease
+                        }
+                        className="flex h-8 w-8 items-center justify-center text-gray-500 transition hover:bg-orange-50 hover:text-orange-600 disabled:cursor-not-allowed disabled:opacity-30 sm:h-9 sm:w-9"
+                      >
+                        +
+                      </button>
+
+                    </div>
+
+
+                    <button
+                      type="button"
+                      onClick={() => {
+
+                        updateQuantity(
+                          item._id,
+                          item.size,
+                          0
+                        )
+
+                      }}
+                      className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-gray-400 transition hover:bg-red-50 hover:text-red-500"
+                      aria-label="Xoá sản phẩm"
+                    >
+
+                      <img
+                        className="w-4"
+                        src={
+                          assets.bin_icon
+                        }
+                        alt="Xoá"
+                      />
+
+                    </button>
+
+                  </div>
+                )
+
+              }
+            )}
+
+          </div>
+
+
+          <div className="mt-16 flex justify-end">
+
+            <div className="w-full rounded-2xl border border-gray-200 bg-gray-50/60 p-6 sm:w-[420px]">
+
+              <CartTotal />
+
+
+              <div className="w-full text-end">
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate(
+                      '/place-order'
+                    )
+                  }
+                  className="mt-6 w-full rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 px-10 py-3.5 text-sm font-semibold text-white shadow-lg shadow-orange-200 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 sm:w-auto"
+                >
+                  TIẾN HÀNH THANH TOÁN
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </>
+
+      )}
 
     </div>
   )
 }
+
 
 export default Cart

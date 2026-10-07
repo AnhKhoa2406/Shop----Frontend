@@ -1,5 +1,5 @@
-
 import React, { useContext, useState } from 'react'
+import Title from '../components/Title'
 import CartTotal from '../components/CartTotal'
 import { ShopContext } from '../context/ShopContext'
 import axios from 'axios'
@@ -34,7 +34,8 @@ const PlaceOrder = () => {
   })
 
   const onChangeHandler = (event) => {
-    const { name, value } = event.target
+    const name = event.target.name
+    const value = event.target.value
 
     setFormData((data) => ({
       ...data,
@@ -64,12 +65,7 @@ const PlaceOrder = () => {
         }
       }
 
-      if (orderItems.length === 0) {
-        toast.error('Giỏ hàng của bạn đang trống!')
-        return
-      }
-
-      const orderData = {
+      let orderData = {
         address: formData,
         items: orderItems,
         amount: getCartAmount() + delivery_fee,
@@ -88,245 +84,278 @@ const PlaceOrder = () => {
 
       if (response.data.success) {
         setCartItems({})
-        toast.success('Đặt hàng thành công!')
         navigate('/orders')
+        toast.success('Đặt hàng thành công!')
       } else {
         toast.error(response.data.message)
       }
     } catch (error) {
       console.log(error)
-
       toast.error(
-        error.response?.data?.message ||
-        error.message ||
-        'Có lỗi xảy ra khi đặt hàng!'
+        error.response?.data?.message || error.message
       )
     }
   }
 
+  const inputClass = `
+    w-full
+    h-12
+    px-4
+    rounded-xl
+    border
+    border-gray-200
+    bg-gray-50
+    text-sm
+    text-gray-900
+    outline-none
+    transition-all
+    duration-200
+    placeholder:text-gray-400
+    focus:bg-white
+    focus:border-orange-400
+    focus:ring-4
+    focus:ring-orange-100
+  `
+
   return (
     <form
       onSubmit={onSubmitHandler}
-      className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 sm:py-12 lg:px-10"
+      className="min-h-[80vh] bg-gray-50 border-t border-gray-100 py-8 sm:py-12"
     >
-      <div className="mx-auto max-w-6xl">
 
-        {/* HEADER */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-orange-100 text-xl">
-              🛍️
-            </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
-                Thanh toán đơn hàng
-              </h1>
-
-              <p className="mt-1 text-sm text-gray-500">
-                Hoàn tất thông tin để đặt hàng
-              </p>
-            </div>
-          </div>
+        {/* ================= HEADER ================= */}
+        <div className="mb-8 sm:mb-10 text-center">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
+            <span className="text-gray-800">THANH </span>
+            <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+              TOÁN
+            </span>
+          </h1>
+          <p className="max-w-xl mx-auto mt-2 text-xs sm:text-sm text-gray-500 leading-relaxed">
+            Hoàn tất thông tin bên dưới để chúng tôi tiến hành giao hàng cho bạn.
+          </p>
         </div>
 
-        {/* MAIN */}
-        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1.25fr_0.75fr] lg:gap-8">
 
-          {/* LEFT */}
-          <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-7">
+        {/* ================= MAIN ================= */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-6 lg:gap-8 items-start">
 
-            {/* TITLE */}
-            <div className="mb-7 flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-orange-100 text-lg">
-                📍
-              </div>
 
-              <div>
-                <h2 className="text-lg font-bold text-gray-900 sm:text-xl">
-                  Thông tin giao hàng
-                </h2>
+          {/* =================================================
+              THÔNG TIN GIAO HÀNG
+          ================================================= */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 p-5 sm:p-7">
 
-                <p className="mt-0.5 text-xs text-gray-500 sm:text-sm">
-                  Nhập chính xác thông tin nhận hàng
-                </p>
-              </div>
+            {/* Title */}
+            <div className="mb-7">
+              <Title
+                text1="THÔNG TIN"
+                text2="GIAO HÀNG"
+              />
+
+              <p className="text-xs text-gray-500 mt-2">
+                Vui lòng nhập chính xác thông tin để chúng tôi giao hàng.
+              </p>
             </div>
 
-            {/* FORM */}
-            <div className="space-y-5">
 
-              {/* FIRST NAME + LAST NAME */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {/* ================= FORM ================= */}
+            <div className="space-y-4">
+
+
+              {/* HỌ + TÊN */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Họ <span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Họ
+                    <span className="text-orange-500 ml-1">*</span>
                   </label>
 
                   <input
                     required
-                    type="text"
+                    onChange={onChangeHandler}
                     name="firstName"
                     value={formData.firstName}
-                    onChange={onChangeHandler}
+                    type="text"
                     placeholder="Nguyễn"
-                    className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-orange-400 focus:bg-white focus:ring-4 focus:ring-orange-100"
+                    className={inputClass}
                   />
                 </div>
 
+
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Tên <span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Tên
+                    <span className="text-orange-500 ml-1">*</span>
                   </label>
 
                   <input
                     required
-                    type="text"
+                    onChange={onChangeHandler}
                     name="lastName"
                     value={formData.lastName}
-                    onChange={onChangeHandler}
+                    type="text"
                     placeholder="Văn A"
-                    className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-orange-400 focus:bg-white focus:ring-4 focus:ring-orange-100"
+                    className={inputClass}
                   />
                 </div>
 
               </div>
+
 
               {/* EMAIL */}
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                  Địa chỉ Email <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Email
+                  <span className="text-orange-500 ml-1">*</span>
                 </label>
 
                 <input
                   required
-                  type="email"
+                  onChange={onChangeHandler}
                   name="email"
                   value={formData.email}
-                  onChange={onChangeHandler}
+                  type="email"
                   placeholder="example@gmail.com"
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-orange-400 focus:bg-white focus:ring-4 focus:ring-orange-100"
+                  className={inputClass}
                 />
               </div>
 
-              {/* STREET */}
+
+              {/* ĐỊA CHỈ */}
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                  Địa chỉ nhận hàng <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Địa chỉ nhận hàng
+                  <span className="text-orange-500 ml-1">*</span>
                 </label>
 
                 <input
                   required
-                  type="text"
+                  onChange={onChangeHandler}
                   name="street"
                   value={formData.street}
-                  onChange={onChangeHandler}
+                  type="text"
                   placeholder="Số nhà, tên đường..."
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-orange-400 focus:bg-white focus:ring-4 focus:ring-orange-100"
+                  className={inputClass}
                 />
               </div>
 
-              {/* CITY + DISTRICT */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+              {/* THÀNH PHỐ + QUẬN */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Tỉnh / Thành phố <span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Tỉnh / Thành phố
+                    <span className="text-orange-500 ml-1">*</span>
                   </label>
 
                   <input
                     required
-                    type="text"
+                    onChange={onChangeHandler}
                     name="city"
                     value={formData.city}
-                    onChange={onChangeHandler}
+                    type="text"
                     placeholder="TP. Hồ Chí Minh"
-                    className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-orange-400 focus:bg-white focus:ring-4 focus:ring-orange-100"
+                    className={inputClass}
                   />
                 </div>
 
+
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Quận / Huyện
                   </label>
 
                   <input
-                    type="text"
+                    onChange={onChangeHandler}
                     name="state"
                     value={formData.state}
-                    onChange={onChangeHandler}
+                    type="text"
                     placeholder="Quận 1"
-                    className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-orange-400 focus:bg-white focus:ring-4 focus:ring-orange-100"
+                    className={inputClass}
                   />
                 </div>
 
               </div>
 
+
               {/* ZIP + COUNTRY */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Mã bưu điện
                   </label>
 
                   <input
-                    type="text"
+                    onChange={onChangeHandler}
                     name="zipcode"
                     value={formData.zipcode}
-                    onChange={onChangeHandler}
+                    type="text"
                     placeholder="700000"
-                    className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-orange-400 focus:bg-white focus:ring-4 focus:ring-orange-100"
+                    className={inputClass}
                   />
                 </div>
 
+
                 <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                    Quốc gia <span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Quốc gia
+                    <span className="text-orange-500 ml-1">*</span>
                   </label>
 
                   <input
                     required
-                    type="text"
+                    onChange={onChangeHandler}
                     name="country"
                     value={formData.country}
-                    onChange={onChangeHandler}
+                    type="text"
                     placeholder="Việt Nam"
-                    className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-orange-400 focus:bg-white focus:ring-4 focus:ring-orange-100"
+                    className={inputClass}
                   />
                 </div>
 
               </div>
 
+
               {/* PHONE */}
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-700">
-                  Số điện thoại <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Số điện thoại
+                  <span className="text-orange-500 ml-1">*</span>
                 </label>
 
                 <input
                   required
-                  type="tel"
+                  onChange={onChangeHandler}
                   name="phone"
                   value={formData.phone}
-                  onChange={onChangeHandler}
+                  type="tel"
                   placeholder="0912 345 678"
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-orange-400 focus:bg-white focus:ring-4 focus:ring-orange-100"
+                  className={inputClass}
                 />
               </div>
 
             </div>
           </div>
 
-          {/* RIGHT */}
+
+          {/* =================================================
+              RIGHT SIDE
+          ================================================= */}
           <div className="space-y-6">
 
-            {/* ORDER TOTAL */}
-            <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
 
-              <div className="mb-5 flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gray-100 text-lg">
+            {/* ================= CART TOTAL ================= */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 p-5 sm:p-6">
+
+              <div className="flex items-center gap-3 mb-5">
+
+                <div className="w-11 h-11 rounded-xl bg-orange-50 flex items-center justify-center text-xl">
                   🛒
                 </div>
 
@@ -335,162 +364,194 @@ const PlaceOrder = () => {
                     Đơn hàng
                   </h2>
 
-                  <p className="mt-0.5 text-xs text-gray-500">
-                    Kiểm tra lại tổng thanh toán
+                  <p className="text-xs text-gray-500 mt-1">
+                    Kiểm tra tổng tiền trước khi đặt hàng
                   </p>
                 </div>
+
               </div>
 
               <CartTotal />
+
             </div>
 
-            {/* PAYMENT */}
-            <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
 
-              {/* PAYMENT HEADER */}
-              <div className="mb-5 flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-orange-100 text-lg">
-                  💳
-                </div>
+            {/* ================= PAYMENT ================= */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 p-5 sm:p-6">
 
-                <div>
-                  <h2 className="text-lg font-bold text-gray-900">
-                    Phương thức thanh toán
-                  </h2>
+              {/* Payment title */}
+              <div className="mb-5">
+                <Title
+                  text1="PHƯƠNG THỨC"
+                  text2="THANH TOÁN"
+                />
 
-                  <p className="mt-0.5 text-xs text-gray-500">
-                    Chọn phương thức thanh toán
-                  </p>
-                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Chọn phương thức thanh toán phù hợp với bạn.
+                </p>
               </div>
 
-              {/* BANKING */}
-              <div
-                onClick={() => setMethod('banking')}
-                className={`flex cursor-pointer items-center gap-4 rounded-xl border-2 p-4 transition-all duration-200 ${
-                  method === 'banking'
-                    ? 'border-orange-500 bg-orange-50 shadow-sm'
-                    : 'border-gray-100 bg-white hover:border-gray-300'
-                }`}
-              >
 
+              {/* PAYMENT OPTIONS */}
+              <div className="space-y-3">
+
+
+                {/* BANKING */}
                 <div
-                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
+                  onClick={() => setMethod('banking')}
+                  className={`flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
                     method === 'banking'
-                      ? 'border-orange-500'
-                      : 'border-gray-300'
+                      ? 'border-orange-500 bg-orange-50 shadow-sm'
+                      : 'border-gray-100 bg-white hover:border-orange-200'
                   }`}
                 >
-                  {method === 'banking' && (
-                    <div className="h-2.5 w-2.5 rounded-full bg-orange-500" />
-                  )}
+
+                  {/* Radio */}
+                  <div
+                    className={`w-5 h-5 min-w-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      method === 'banking' ? 'border-orange-500' : 'border-gray-300'
+                    }`}
+                  >
+                    {method === 'banking' && (
+                      <span className="w-2.5 h-2.5 rounded-full bg-orange-500" />
+                    )}
+                  </div>
+
+
+                  {/* Icon */}
+                  <div className="w-10 h-10 min-w-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-lg">
+                    💳
+                  </div>
+
+
+                  {/* Text */}
+                  <div className="flex-1">
+
+                    <p className="text-sm font-bold text-gray-900">
+                      Chuyển khoản ngân hàng
+                    </p>
+
+                    <p className="text-xs text-gray-500 mt-1">
+                      Thanh toán nhanh qua QR Code
+                    </p>
+
+                  </div>
+
                 </div>
 
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-gray-100 bg-white text-lg">
-                  💳
-                </div>
 
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-gray-900">
-                    Chuyển khoản ngân hàng
-                  </p>
-
-                  <p className="mt-1 text-xs text-gray-500">
-                    Thanh toán qua QR Code
-                  </p>
-                </div>
-
-                {method === 'banking' && (
-                  <span className="hidden text-xs font-semibold text-orange-600 sm:block">
-                    Đã chọn
-                  </span>
-                )}
-              </div>
-
-              {/* COD */}
-              <div
-                onClick={() => setMethod('cod')}
-                className={`mt-3 flex cursor-pointer items-center gap-4 rounded-xl border-2 p-4 transition-all duration-200 ${
-                  method === 'cod'
-                    ? 'border-orange-500 bg-orange-50 shadow-sm'
-                    : 'border-gray-100 bg-white hover:border-gray-300'
-                }`}
-              >
-
+                {/* COD */}
                 <div
-                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
+                  onClick={() => setMethod('cod')}
+                  className={`flex items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
                     method === 'cod'
-                      ? 'border-orange-500'
-                      : 'border-gray-300'
+                      ? 'border-orange-500 bg-orange-50 shadow-sm'
+                      : 'border-gray-100 bg-white hover:border-orange-200'
                   }`}
                 >
-                  {method === 'cod' && (
-                    <div className="h-2.5 w-2.5 rounded-full bg-orange-500" />
-                  )}
+
+                  {/* Radio */}
+                  <div
+                    className={`w-5 h-5 min-w-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      method === 'cod' ? 'border-orange-500' : 'border-gray-300'
+                    }`}
+                  >
+                    {method === 'cod' && (
+                      <span className="w-2.5 h-2.5 rounded-full bg-orange-500" />
+                    )}
+                  </div>
+
+
+                  {/* Icon */}
+                  <div className="w-10 h-10 min-w-10 rounded-xl bg-gray-100 flex items-center justify-center text-lg">
+                    📦
+                  </div>
+
+
+                  {/* Text */}
+                  <div className="flex-1">
+
+                    <p className="text-sm font-bold text-gray-900">
+                      Thanh toán khi nhận hàng
+                    </p>
+
+                    <p className="text-xs text-gray-500 mt-1">
+                      Thanh toán tiền mặt khi nhận hàng
+                    </p>
+
+                  </div>
+
                 </div>
 
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-lg">
-                  📦
-                </div>
-
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-gray-900">
-                    Thanh toán khi nhận hàng
-                  </p>
-
-                  <p className="mt-1 text-xs text-gray-500">
-                    Thanh toán tiền mặt khi nhận hàng
-                  </p>
-                </div>
-
-                {method === 'cod' && (
-                  <span className="hidden text-xs font-semibold text-orange-600 sm:block">
-                    Đã chọn
-                  </span>
-                )}
               </div>
 
-              {/* BANKING QR */}
-              {method === 'banking' && (
-                <div className="mt-5 rounded-2xl border border-orange-100 bg-gradient-to-b from-orange-50 to-white p-5 text-center">
 
-                  <div className="mb-4">
-                    <p className="text-sm font-semibold text-gray-900">
+              {/* ================= QR ================= */}
+              {method === 'banking' && (
+                <div className="mt-5 p-5 rounded-2xl border border-orange-200 bg-gradient-to-b from-orange-50 to-white">
+
+                  {/* QR HEADER */}
+                  <div className="text-center mb-4">
+
+                    <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-orange-100 mb-2">
+                      📱
+                    </div>
+
+                    <p className="text-sm font-bold text-gray-900">
                       Quét mã QR để thanh toán
                     </p>
 
-                    <p className="mt-1 text-xs text-gray-500">
-                      Mở ứng dụng ngân hàng và quét mã
+                    <p className="text-xs text-gray-500 mt-1">
+                      Mở ứng dụng ngân hàng và quét mã bên dưới
                     </p>
+
                   </div>
 
-                  <div className="inline-flex rounded-2xl border border-gray-100 bg-white p-3 shadow-md">
-                    <img
-                      src="https://img.vietqr.io/image/VCB-0123456789-compact2.png?amount=0&addInfo=Thanh%20toan%20don%20hang&accountName=SHOP%20ONLINE"
-                      alt="QR Code thanh toán"
-                      className="h-44 w-44 rounded-lg object-contain"
-                    />
+
+                  {/* QR IMAGE */}
+                  <div className="flex justify-center mb-4">
+                    <div className="bg-white p-3 rounded-2xl border border-gray-100 shadow-md">
+
+                      <img
+                        src="https://img.vietqr.io/image/VCB-0123456789-compact2.png?amount=0&addInfo=Thanh%20toan%20don%20hang&accountName=SHOP%20ONLINE"
+                        alt="QR Code"
+                        className="w-44 h-44 object-contain rounded-lg"
+                      />
+
+                    </div>
                   </div>
 
-                  {/* BANK INFORMATION */}
-                  <div className="mt-5 space-y-2 text-xs text-gray-600">
 
-                    <div className="flex items-center justify-between gap-3 rounded-lg border border-gray-100 bg-white px-3 py-2.5">
-                      <span>Ngân hàng</span>
+                  {/* BANK INFO */}
+                  <div className="space-y-2 text-xs">
+
+                    <div className="flex justify-between items-center bg-white rounded-xl border border-gray-100 px-3 py-2.5">
+                      <span className="text-gray-500">
+                        Ngân hàng
+                      </span>
+
                       <strong className="text-gray-900">
                         Vietcombank
                       </strong>
                     </div>
 
-                    <div className="flex items-center justify-between gap-3 rounded-lg border border-gray-100 bg-white px-3 py-2.5">
-                      <span>Số tài khoản</span>
+
+                    <div className="flex justify-between items-center bg-white rounded-xl border border-gray-100 px-3 py-2.5">
+                      <span className="text-gray-500">
+                        Số tài khoản
+                      </span>
+
                       <strong className="text-gray-900">
                         0123456789
                       </strong>
                     </div>
 
-                    <div className="flex items-center justify-between gap-3 rounded-lg border border-gray-100 bg-white px-3 py-2.5">
-                      <span>Chủ tài khoản</span>
+
+                    <div className="flex justify-between items-center bg-white rounded-xl border border-gray-100 px-3 py-2.5">
+                      <span className="text-gray-500">
+                        Chủ tài khoản
+                      </span>
+
                       <strong className="text-gray-900">
                         SHOP ONLINE
                       </strong>
@@ -498,61 +559,95 @@ const PlaceOrder = () => {
 
                   </div>
 
-                  {/* TRANSFER NOTE */}
-                  <div className="mt-4 rounded-xl border border-orange-200 bg-orange-100 px-4 py-3">
-                    <p className="text-xs leading-relaxed text-orange-800">
-                      <span className="font-semibold">
+
+                  {/* NOTE */}
+                  <div className="mt-4 p-3 rounded-xl bg-orange-100 border border-orange-200 text-center">
+                    <p className="text-xs text-orange-800">
+                      <span className="font-bold">
                         Nội dung chuyển khoản:
-                      </span>{' '}
+                      </span>
+
+                      <br />
+
                       Thanh toán đơn hàng
                     </p>
                   </div>
+
                 </div>
               )}
 
-              {/* COD INFO */}
+
+              {/* ================= COD INFO ================= */}
               {method === 'cod' && (
-                <div className="mt-5 rounded-xl border border-gray-100 bg-gray-50 p-4">
+                <div className="mt-5 p-4 rounded-2xl bg-gray-50 border border-gray-100">
 
                   <div className="flex gap-3">
 
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-100 bg-white">
+                    <div className="w-10 h-10 min-w-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center">
                       🚚
                     </div>
 
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">
+
+                      <p className="text-sm font-bold text-gray-900">
                         Thanh toán khi nhận hàng
                       </p>
 
-                      <p className="mt-1 text-xs leading-relaxed text-gray-500">
-                        Bạn sẽ thanh toán trực tiếp cho nhân viên giao hàng
-                        khi đơn hàng được giao tới địa chỉ của bạn.
+                      <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                        Bạn sẽ thanh toán trực tiếp cho nhân viên
+                        giao hàng khi nhận được đơn hàng.
                       </p>
+
                     </div>
 
                   </div>
+
                 </div>
               )}
 
-              {/* BUTTON */}
+
+              {/* ================= BUTTON ================= */}
               <button
                 type="submit"
-                className="mt-6 w-full rounded-xl bg-gray-900 px-6 py-3.5 text-sm font-semibold tracking-wide text-white transition-all duration-200 hover:bg-orange-500 hover:shadow-lg active:scale-[0.98]"
+                className="
+                  w-full
+                  mt-6
+                  py-3.5
+                  px-6
+                  rounded-xl
+                  bg-gradient-to-r
+                  from-orange-500
+                  to-orange-600
+                  text-white
+                  text-sm
+                  font-bold
+                  tracking-wide
+                  shadow-lg
+                  shadow-orange-200
+                  transition-all
+                  duration-300
+                  hover:shadow-xl
+                  hover:-translate-y-0.5
+                  active:translate-y-0
+                "
               >
                 ĐẶT HÀNG NGAY
               </button>
 
+
               {/* SECURITY */}
-              <div className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-gray-400">
+              <div className="flex items-center justify-center gap-1.5 mt-3 text-[11px] text-gray-400">
                 <span>🔒</span>
+
                 <span>
-                  Thông tin của bạn được bảo mật an toàn
+                  Thanh toán an toàn &amp; bảo mật
                 </span>
               </div>
 
             </div>
+
           </div>
+
         </div>
       </div>
     </form>
@@ -560,4 +655,3 @@ const PlaceOrder = () => {
 }
 
 export default PlaceOrder
-
